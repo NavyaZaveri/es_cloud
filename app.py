@@ -6,7 +6,7 @@ import post_utils
 
 app = Flask(__name__)
 client = None
-TESTING = True
+TESTING = False
 
 if not TESTING:
     app.config.from_object("config.ProductionConfig")
