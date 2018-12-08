@@ -1,0 +1,3 @@
+username = "elastic"
+password = "AEwCdtyr8tuBO2452YUdi3hZ"
+cloud_id = "sentiment-analysis:ZXVyb3BlLXdlc3QxLmdjcC5jbG91ZC5lcy5pbyRlZDU3ZGE5ZmU4MDE0MzQ1YjIxMTI1NDE2OGMzZGU5MiQ5YzBiM2NlZDY5ZTM0MTAwOTZhYzcwNWE5NzM1ZDMwOQ=="
