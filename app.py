@@ -1,8 +1,8 @@
 """
-A wrapper around the elastic search api
+A REST api hosted on that acts as a wrapper around
+the elastic-search dl library
 
 """
-
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import MultiMatch
@@ -30,7 +30,6 @@ def index():
     query = MultiMatch(query="python", fields=['title', 'content'], fuzziness='AUTO')
     s = Search(using=client).query(query)
     response = s.execute()
-    print(response)
     posts = []
     for hit in response:
         posts.append(post_utils.toPost(hit))
@@ -53,7 +52,6 @@ def find_posts():
     posts = []
 
     for hit in response:
-        print(hit)
         posts.append(post_utils.toPost(hit))
     return jsonify({"result": posts}), 200
 
@@ -67,7 +65,7 @@ def populate_es_database():
     """
     # check if the post request has the file part
     if "file" not in request.files:
-        return json.dumps({"result": "please send a json file"}), 400
+        return jsonify({"result": "please send a json file"}), 400
 
     file = request.files["file"]
 
@@ -85,7 +83,7 @@ def insert_post():
                                      "please make you sure the json has the field 'post'"}), 400
 
     if not post_utils.is_valid_post(post):
-        return json.dumps(
+        return jsonify(
             {"result": "missing content/id field in the post,"
                        " please make sure you have them as attributes in your post"}), 400
 
@@ -112,8 +110,8 @@ def delete_post():
     """
     json_id = request.get_json()
     if json_id is None:
-        return json.dumps(
-            {"result": "json content not recieved. Please make sure you send json,"
+        return jsonify(
+            {"result": "json content not received. Please make sure you send json,"
                        " with content_type='application/json'"}), 400
 
     id_to_be_deleted = json_id["id"]

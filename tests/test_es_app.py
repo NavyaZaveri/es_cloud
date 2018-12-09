@@ -13,12 +13,12 @@ class TestEsApp(unittest.TestCase):
 
         print("testIfApiIsUp() passed")
 
-    def testGetMethodforFindingPosts(self):
+    def testFindRelevantPosts(self):
         # valid query
-        res = self.app.get("/query", query_string={"literal_query": "blwf", "limit": 20, "strategy": "fuzzy"})
+        res = self.app.get("/query", query_string={"literal_query": "blah", "limit": 20, "strategy": "fuzzy"})
         self.assertEqual(res.status_code, 200)
 
-        print("finding method passed")
+        print("testFindRelevantPosts passed")
 
     def testInvalidParm(self):
         # doesn't contain the query
@@ -48,6 +48,7 @@ class TestEsApp(unittest.TestCase):
 
         # there should more than 1 matches of haskell docs
         self.assertTrue(len(res.get_json()["result"]) >= 1)
+        print(res.get_json()["result"])
 
         res = self.app.post("/delete", data=json.dumps({"id": 100}))
 

@@ -14,6 +14,8 @@ def toPost(elastic_hit):
         post["content"] = elastic_hit["content"]
     if "_id" in elastic_hit:
         post["id"] = elastic_hit["_id"]
+    if "timestamp" in elastic_hit:
+        post["timestamp"] = elastic_hit["timestamp"]
 
     return post
 

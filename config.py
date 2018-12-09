@@ -14,3 +14,9 @@ class ProductionConfig(Config):
     ES_PASSWORD = "AEwCdtyr8tuBO2452YUdi3hZ"
     ES_USERNAME = "elastic"
     ES_ENDPOINT = "https://ed57da9fe8014345b211254168c3de92.europe-west1.gcp.cloud.es.io:9243/"
+
+
+"""
+Elastic search sanity checks 
+http://localhost:9200/es_docs/_search?pretty=true&q=*:*
+"""
