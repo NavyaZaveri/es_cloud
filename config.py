@@ -1,5 +1,7 @@
 class Config:
     PRODUCTION = False
+    INDEX = "es_docs"
+    DOC_TYPE = "doc"
 
 
 class TestingConfig(Config):

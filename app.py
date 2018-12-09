@@ -1,12 +1,17 @@
+"""
+A wrapper around the elastic search api
+
+"""
+
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import MultiMatch
-from flask import Flask, json, request
+from flask import Flask, json, request, jsonify
 import post_utils
 
 app = Flask(__name__)
 client = None
-TESTING = False
+TESTING = True
 
 if not TESTING:
     app.config.from_object("config.ProductionConfig")
@@ -37,18 +42,20 @@ def find_posts():
     q = request.args.get("literal_query")
     l = request.args.get("limit")
     s = request.args.get("strategy")
+    print(q)
     if not q:
-        return json.dumps({"result": "invalid query paramaters - please set query"}), 400
+        return jsonify({"result": "invalid query parameters - please set query"}), 400
 
     query = MultiMatch(query=q, fields=['title', 'content'], fuzziness='AUTO')
     s = Search(using=client).query(query)
 
     response = s.execute()
-    for hit in response:
-        print(hit.content)
-        print(hit.score)
+    posts = []
 
-    return json.dumps({"result": "success"}), 200
+    for hit in response:
+        print(hit)
+        posts.append(post_utils.toPost(hit))
+    return jsonify({"result": posts}), 200
 
 
 @app.route("/repopulate", methods=["POST"])
@@ -63,8 +70,55 @@ def populate_es_database():
         return json.dumps({"result": "please send a json file"}), 400
 
     file = request.files["file"]
-    print(file)
+
     return "ok"
+
+
+@app.route("/insert", methods=["POST"])
+def insert_post():
+    json_post = request.get_json()
+
+    try:
+        post = json_post["post"]
+    except KeyError:
+        return json.dumps({"result": "missing in json,"
+                                     "please make you sure the json has the field 'post'"}), 400
+
+    if not post_utils.is_valid_post(post):
+        return json.dumps(
+            {"result": "missing content/id field in the post,"
+                       " please make sure you have them as attributes in your post"}), 400
+
+    # inserts a post
+    client.index("es_docs", "doc", post, id=post["id"])
+
+    return "ok", 201
+
+
+@app.route("/retrieve", methods=["GET"])
+def retrieve_post():
+    pass
+
+
+@app.route("/bulkInsert", methods=["POST"])
+def bulk_insert():
+    pass
+
+
+@app.route("/delete", methods=["POST"])
+def delete_post():
+    """
+    deletes a post given an id
+    """
+    json_id = request.get_json()
+    if json_id is None:
+        return json.dumps(
+            {"result": "json content not recieved. Please make sure you send json,"
+                       " with content_type='application/json'"}), 400
+
+    id_to_be_deleted = json_id["id"]
+    client.delete(index="es_docs", doc_type="doc", id=id_to_be_deleted)
+    return "ok", 201
 
 
 if __name__ == "__main__":
