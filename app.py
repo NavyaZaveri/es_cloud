@@ -1,8 +1,8 @@
 """
 A REST api hosted on that acts as a wrapper around
 the elastic-search dl library
-
 """
+
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import MultiMatch
@@ -41,7 +41,6 @@ def find_posts():
     q = request.args.get("literal_query")
     l = request.args.get("limit")
     s = request.args.get("strategy")
-    print(q)
     if not q:
         return jsonify({"result": "invalid query parameters - please set query"}), 400
 

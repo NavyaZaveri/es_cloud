@@ -18,5 +18,5 @@ class ProductionConfig(Config):
 
 """
 Elastic search sanity checks 
-http://localhost:9200/es_docs/_search?pretty=true&q=*:*
+to see all records: http://localhost:9200/es_docs/_search?pretty=true&q=*:*
 """

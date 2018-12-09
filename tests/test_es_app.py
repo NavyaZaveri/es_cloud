@@ -22,12 +22,12 @@ class TestEsApp(unittest.TestCase):
 
     def testInvalidParm(self):
         # doesn't contain the query
-
         res = self.app.get("/query", query_string={"limit": 20})
+
         self.assertEqual(res.status_code, 400)
         print("Invalid Param tests passed")
 
-    def testInsertAndDeletePost(self):
+    def testInsertAndDelete(self):
         res = self.app.post("/insert",
                             data=json.dumps({"post": {"url": "blah", "score": 1, "content": "blah", "id": 100}}),
                             content_type="application/json")
@@ -40,13 +40,13 @@ class TestEsApp(unittest.TestCase):
 
     def testEverything(self):
         self.app.post("/insert",
-                      data=json.dumps({"post": {"content": "haskell is great", "score": 1, "url": "blah", "id": 100}}),
+                      data=json.dumps({"post": {"content": "scala is great", "score": 1, "url": "blah", "id": 100}}),
                       content_type="application/json")
 
         # uses fuzzy matching by default (thus the explicit typo)
-        res = self.app.get("/query", query_string={"literal_query": "haskel"})
+        res = self.app.get("/query", query_string={"literal_query": "scala"})
 
-        # there should more than 1 matches of haskell docs
+        # there should more than 1 match
         self.assertTrue(len(res.get_json()["result"]) >= 1)
         print(res.get_json()["result"])
 
