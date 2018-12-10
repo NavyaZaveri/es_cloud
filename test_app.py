@@ -45,7 +45,7 @@ def find_posts():
             "result": "invalid query parameters - please set query"
         }), 400
 
-    query = MultiMatch(query=q, fields=['title', 'content'], fuzziness='AUTO')
+    query = MultiMatch(query=q, fields=['content'], fuzziness='AUTO')
     s = Search(using=client).query(query)
 
     response = s.execute()
