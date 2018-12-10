@@ -1,3 +1,8 @@
+"""
+unittests on a local instance of the elastic search rest api
+(see localhost_app.py)
+"""
+
 import unittest
 from flask import json
 from locahost_app import app
@@ -50,7 +55,8 @@ class TestEsApp(unittest.TestCase):
         self.assertTrue(len(res.get_json()["result"]) >= 1)
         print(res.get_json()["result"])
 
-        res = self.app.post("/delete", data=json.dumps({"id": 100}))
+        res = self.app.post("/delete", data=json.dumps({"id": 100}),
+                            content_type="application/json")
 
         # post deleted, everything's fine
-        self.assertTrue(res.status_code, 201)
+        self.assertEqual(res.status_code, 201)
