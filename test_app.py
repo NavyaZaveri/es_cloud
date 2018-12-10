@@ -11,11 +11,11 @@ from flask import Flask, json, request, jsonify
 import post_utils
 
 app = Flask(__name__)
+client = None
 
-app.config.from_object("config.productionConfig")
+app.config.from_object("config.TestingConfig")
 client = Elasticsearch(
-    app.config.get("ES_ENDPOINT"),
-    http_auth=(os.environ.get("ES_USERNAME"), os.environ.get("ES_PASSWORD")))
+    app.config.get("ES_ENDPOINT"), ca_serts=False, verify_certs=False)
 
 
 @app.route("/", methods=["GET"])
