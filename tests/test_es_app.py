@@ -48,7 +48,7 @@ class TestEsApp(unittest.TestCase):
                       data=json.dumps({"post": {"content": "scala is great", "score": 1, "url": "blah", "id": 100}}),
                       content_type="application/json")
 
-        # uses fuzzy matching by default (thus the explicit typo)
+        # the rest es client uses fuzzy matching by default (thus the explicit typo)
         res = self.app.get("/query", query_string={"literal_query": "skala"})
 
         # there should more than 1 match
