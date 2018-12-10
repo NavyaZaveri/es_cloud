@@ -44,7 +44,7 @@ class TestEsApp(unittest.TestCase):
                       content_type="application/json")
 
         # uses fuzzy matching by default (thus the explicit typo)
-        res = self.app.get("/query", query_string={"literal_query": "scala"})
+        res = self.app.get("/query", query_string={"literal_query": "skala"})
 
         # there should more than 1 match
         self.assertTrue(len(res.get_json()["result"]) >= 1)
