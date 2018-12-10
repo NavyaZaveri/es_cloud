@@ -1,6 +1,10 @@
 import unittest
 from flask import json
 from app import app
+from app import TESTING
+
+if not TESTING:
+    raise RuntimeError("Testing not set to True in app.py!")
 
 
 class TestEsApp(unittest.TestCase):
