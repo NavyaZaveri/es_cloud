@@ -17,7 +17,7 @@ TESTING = False
 if not TESTING:
     app.config.from_object("config.ProductionConfig")
     client = Elasticsearch(app.config.get("ES_ENDPOINT"),
-                           http_auth=(app.config.get("ES_USERNAME"), app.config.get("ES_PASSWORD")))
+                           http_auth=(os.environ.get("ES_USERNAME"), os.get("ES_PASSWORD")))
 else:
     app.config.from_object("config.TestingConfig")
     client = Elasticsearch(app.config.get("ES_ENDPOINT"), ca_serts=False, verify_certs=False)
