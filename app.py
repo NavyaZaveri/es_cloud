@@ -20,10 +20,6 @@ client = Elasticsearch(
 
 @app.route("/", methods=["GET"])
 def index():
-    print(os.environ.get("ES_PASSWORD"))
-    """
-    """
-
     query = MultiMatch(
         query="python", fields=['title', 'content'], fuzziness='AUTO')
     s = Search(using=client).query(query)
@@ -110,7 +106,7 @@ def bulk_insert():
 @app.route("/delete", methods=["POST"])
 def delete_post():
     """
-    deletes a post given an id
+    deletes a post, given an id
     """
     json_id = request.get_json()
     if json_id is None:
