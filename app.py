@@ -1,6 +1,6 @@
 """
-A REST api hosted on that acts as a wrapper around
-the elastic-search dl library. To be used with spring boot
+A REST api hosted on heroku, acting as a wrapper around
+the elastic-search dl library. 
 """
 import os
 
@@ -12,7 +12,7 @@ import post_utils
 
 app = Flask(__name__)
 client = None
-TESTING = False
+TESTING = True
 
 if not TESTING:
     app.config.from_object("config.ProductionConfig")
