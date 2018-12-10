@@ -2,6 +2,7 @@
 A REST api hosted on that acts as a wrapper around
 the elastic-search dl library. To be used with spring boot
 """
+import os
 
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
@@ -24,6 +25,7 @@ else:
 
 @app.route("/", methods=["GET"])
 def index():
+    print(os.environ.get("ES_PASSWORD"))
     """
     """
 
