@@ -1,6 +1,6 @@
 import unittest
 from flask import json
-from test_app import app
+from locahost_app import app
 
 
 class TestEsApp(unittest.TestCase):
