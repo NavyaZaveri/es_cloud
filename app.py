@@ -12,7 +12,7 @@ import post_utils
 
 app = Flask(__name__)
 
-app.config.from_object("config.productionConfig")
+app.config.from_object("config.ProductionConfig")
 client = Elasticsearch(
     app.config.get("ES_ENDPOINT"),
     http_auth=(os.environ.get("ES_USERNAME"), os.environ.get("ES_PASSWORD")))
