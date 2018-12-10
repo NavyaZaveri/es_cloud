@@ -21,10 +21,6 @@ client = Elasticsearch(
 
 @app.route("/", methods=["GET"])
 def index():
-    print(os.environ.get("ES_PASSWORD"))
-    """
-    """
-
     query = MultiMatch(
         query="python", fields=['title', 'content'], fuzziness='AUTO')
     s = Search(using=client).query(query)
