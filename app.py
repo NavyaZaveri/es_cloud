@@ -1,6 +1,6 @@
 """
 A REST api hosted on that acts as a wrapper around
-the elastic-search dl library
+the elastic-search dl library. To be used with spring boot
 """
 
 from elasticsearch import Elasticsearch
