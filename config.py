@@ -1,6 +1,6 @@
 class Config:
     PRODUCTION = False
-    INDEX = "es_docs"
+    INDEX = "es_english_docs"
     DOC_TYPE = "doc"
 
 
@@ -15,6 +15,7 @@ class ProductionConfig(Config):
 
 
 """
-Elastic search sanity checks 
+Elastic search sanity checks
 to see all records: http://localhost:9200/es_docs/_search?pretty=true&q=*:*
+https://ed57da9fe8014345b211254168c3de92.europe-west1.gcp.cloud.es.io:9243/_search?pretty=true&q=*:*
 """

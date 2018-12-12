@@ -76,19 +76,19 @@ def insert_post():
     except KeyError:
         return json.dumps({
             "result":
-                "missing in json,"
-                "please make you sure the json has the field 'post'"
+            "key missing in json,"
+            "please make you sure the json has the field 'post'"
         }), 400
 
     if not post_utils.is_valid_post(post):
         return jsonify({
             "result":
-                "missing content/id field in the post,"
-                " please make sure you have them as attributes in your post"
+            "missing content/id field in the post,"
+            " please make sure you have them as attributes in your post"
         }), 400
 
     # inserts a post
-    client.index("es_docs", "doc", post, id=post["id"])
+    client.index("es_english_docs", "doc", post, id=post["id"])
 
     return "ok", 201
 
@@ -112,12 +112,12 @@ def delete_post():
     if json_id is None:
         return jsonify({
             "result":
-                "json content not received. Please make sure you send json,"
-                " with content_type='application/json'"
+            "json content not received. Please make sure you send json,"
+            " with content_type='application/json'"
         }), 400
 
     id_to_be_deleted = json_id["id"]
-    client.delete(index="es_docs", doc_type="doc", id=id_to_be_deleted)
+    client.delete(index="es_english_docs", doc_type="doc", id=id_to_be_deleted)
     return "ok", 201
 
 
