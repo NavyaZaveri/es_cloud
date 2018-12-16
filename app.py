@@ -25,7 +25,7 @@ def index():
     s = Search(using=client).query(query)
     response = s.execute()
     posts = []
-    for hit in response:
+    for hit in response:    
         posts.append(post_utils.toPost(hit))
     return json.dumps({"result": posts}), 200
 
