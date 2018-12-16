@@ -11,7 +11,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     PRODUCTION = True
-    ES_ENDPOINT = "https://ed57da9fe8014345b211254168c3de92.europe-west1.gcp.cloud.es.io:9243/"
+    ES_ENDPOINT = "https://cb3651b9fca744f882cd483693bd3ec5.europe-west1.gcp.cloud.es.io:9243/"
 
 
 """
