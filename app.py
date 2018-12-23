@@ -2,20 +2,32 @@
 A REST api hosted on heroku, acting as a wrapper around
 the elastic-search dl library.
 """
-import os
+
+import re
 
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import MultiMatch
 from flask import Flask, json, request, jsonify
+
 import post_utils
 
 app = Flask(__name__)
-
 app.config.from_object("config.ProductionConfig")
-client = Elasticsearch(
-    app.config.get("ES_ENDPOINT"),
-    http_auth=(os.environ.get("ES_USERNAME"), os.environ.get("ES_PASSWORD")))
+
+bonsai = app.config.get("ES_ENDPOINT")
+auth = re.search('https\:\/\/(.*)\@', bonsai).group(1).split(':')
+host = bonsai.replace('https://%s:%s@' % (auth[0], auth[1]), '')
+
+# Connect to cluster over SSL using auth for best security:
+es_header = [{
+    'host': host,
+    'port': 443,
+    'use_ssl': True,
+    'http_auth': (auth[0], auth[1])
+}]
+
+client = Elasticsearch(es_header)
 
 
 @app.route("/", methods=["GET"])
@@ -25,7 +37,7 @@ def index():
     s = Search(using=client).query(query)
     response = s.execute()
     posts = []
-    for hit in response:    
+    for hit in response:
         posts.append(post_utils.toPost(hit))
     return json.dumps({"result": posts}), 200
 
@@ -55,7 +67,8 @@ def find_posts():
 def populate_es_database():
     """
     delete all existing documents and
-    repopulate them from the json file
+    repopulate the index with contents
+    in the json file
 
     """
     # check if the post request has the file part
@@ -76,19 +89,19 @@ def insert_post():
     except KeyError:
         return json.dumps({
             "result":
-            "key missing in json,"
-            "please make you sure the json has the field 'post'"
+                "key missing in json,"
+                "please make you sure the json has the field 'post'"
         }), 400
 
     if not post_utils.is_valid_post(post):
         return jsonify({
             "result":
-            "missing content/id field in the post,"
-            " please make sure you have them as attributes in your post"
+                "missing content/id field in the post,"
+                " please make sure you have them as attributes in your post"
         }), 400
 
     # inserts a post
-    client.index("es_english_docs", "doc", post, id=post["id"])
+    client.index(app.config.get("INDEX"), "doc", post, id=post["id"])
 
     return "ok", 201
 
@@ -112,12 +125,12 @@ def delete_post():
     if json_id is None:
         return jsonify({
             "result":
-            "json content not received. Please make sure you send json,"
-            " with content_type='application/json'"
+                "json content not received. Please make sure you send json,"
+                " with content_type='application/json'"
         }), 400
 
     id_to_be_deleted = json_id["id"]
-    client.delete(index="es_english_docs", doc_type="doc", id=id_to_be_deleted)
+    client.delete(index=app.config.get("INDEX"), doc_type="doc", id=id_to_be_deleted)
     return "ok", 201
 
 

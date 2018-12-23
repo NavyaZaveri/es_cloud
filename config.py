@@ -11,8 +11,8 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     PRODUCTION = True
-    ES_ENDPOINT = "https://cb3651b9fca744f882cd483693bd3ec5.europe-west1.gcp.cloud.es.io:9243/"
-
+    ES_ENDPOINT = "https://ih1t24sgu0:knjk6hjbqp@sentiment-analysis-2068917443.ap-southeast-2.bonsaisearch.net"
+    INDEX = "events-documents"
 
 """
 Elastic search sanity checks
