@@ -4,7 +4,7 @@ the elastic-search dl library.
 """
 
 import re
-
+import es_api
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import MultiMatch
@@ -12,6 +12,8 @@ from flask import Flask, json, request, jsonify
 
 import post_utils
 
+app = es_api.create_app("PRODUCTION")
+''''
 app = Flask(__name__)
 app.config.from_object("config.ProductionConfig")
 
@@ -133,6 +135,6 @@ def delete_post():
     client.delete(index=app.config.get("INDEX"), doc_type="doc", id=id_to_be_deleted)
     return "ok", 201
 
-
+'''
 if __name__ == "__main__":
     app.run()
