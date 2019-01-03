@@ -6,11 +6,12 @@ unittests on a local instance of the elastic search rest api
 import unittest
 from flask import json
 from locahost_app import app
+import es_api
 
 
 class TestEsApp(unittest.TestCase):
     def setUp(self):
-        self.app = app.test_client()
+        self.app = es_api.create_app("TESTING").test_client()
 
     def testIfApiIsUp(self):
         response = self.app.get("/")
