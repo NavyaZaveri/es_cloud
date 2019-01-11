@@ -5,7 +5,6 @@ unittests on a local instance of the elastic search rest api
 
 import unittest
 from flask import json
-from locahost_app import app
 import es_api
 
 
