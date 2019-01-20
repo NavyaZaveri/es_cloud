@@ -38,7 +38,7 @@ def create_blueprint(config):
             }), 400
 
         query = MultiMatch(query=q, fields=['content'], fuzziness='AUTO')
-        s = Search(using=client).query(query)
+        s = Search(using=client, index=index).query(query)
 
         response = s.execute()
         posts = []
