@@ -65,10 +65,10 @@ def create_blueprint(config):
 
     @es_blueprint.route("/insert", methods=["POST"])
     def insert_post():
-        json_post = request.get_json()
+        json_blob = request.get_json()
 
         try:
-            post = json_post["post"]
+            post = json_blob["post"]
         except KeyError:
             return json.dumps({
                 "result":
