@@ -20,7 +20,7 @@ def create_blueprint(config):
     def home():
         query = MultiMatch(
             query="python", fields=['title', 'content'], fuzziness='AUTO')
-        s = Search(using=client).query(query)
+        s = Search(using=client, index=index).query(query)
         response = s.execute()
         posts = []
         for hit in response:
