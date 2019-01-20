@@ -41,6 +41,9 @@ class TestEsApp(unittest.TestCase):
         self.app.post("/delete", data=json.dumps({"id": 100}),
                       content_type="application/json")
 
+        self.assertEqual(res.status_code, 201)
+
+
         print("insert + delete tests passed")
 
     def testEverything(self):
