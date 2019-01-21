@@ -34,7 +34,7 @@ def create_blueprint(config):
         s = request.args.get("strategy")
         if not q:
             return jsonify({
-                "result": "invalid query parameters - please set query"
+                "result": "invalid query parameters - please set literal query"
             }), 400
 
         query = MultiMatch(query=q, fields=['content'], fuzziness='AUTO')
@@ -85,7 +85,6 @@ def create_blueprint(config):
 
         # inserts a post
         client.index(index, "doc", post, id=post["id"])
-
         return "ok", 201
 
     @es_blueprint.route("/retrieve", methods=["GET"])

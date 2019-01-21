@@ -43,22 +43,24 @@ class TestEsApp(unittest.TestCase):
 
         self.assertEqual(res.status_code, 201)
 
-
-        print("insert + delete tests passed")
+        print("testInsertAndDelete() passed")
 
     def testEverything(self):
-        self.app.post("/insert",
-                      data=json.dumps({"post": {"content": "scala is great", "score": 1, "url": "blah", "id": 100}}),
-                      content_type="application/json")
+        res = self.app.post("/insert",
+                            data=json.dumps(
+                                {"post": {"content": "scala is great", "score": 1, "url": "blah", "id": 500}}),
+                            content_type="application/json")
+
+        self.assertEqual(res.status_code, 201)
 
         # the rest es client uses fuzzy matching by default (thus the explicit typo)
         res = self.app.get("/query", query_string={"literal_query": "skala"})
 
         # there should more than 1 match
         self.assertTrue(len(res.get_json()["result"]) >= 1)
-        print(res.get_json()["result"])
 
-        res = self.app.post("/delete", data=json.dumps({"id": 100}), content_type="application/json")
+        res = self.app.post("/delete", data=json.dumps({"id": 500}), content_type="application/json")
 
         # post deleted, everything's fine
         self.assertEqual(res.status_code, 201)
+        print("Mini Integration test passed")
