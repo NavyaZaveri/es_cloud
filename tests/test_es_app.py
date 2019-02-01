@@ -20,47 +20,33 @@ class TestEsApp(unittest.TestCase):
 
     def testFindRelevantPosts(self):
         # valid query
-        res = self.app.get("/query", query_string={"literal_query": "blah", "limit": 20, "strategy": "fuzzy"})
+        res = self.app.get("/search", query_string={"literal_query": "blah", "limit": 20, "strategy": "fuzzy"})
         self.assertEqual(res.status_code, 200)
 
         print("testFindRelevantPosts passed")
 
     def testInvalidParm(self):
         # doesn't contain the query
-        res = self.app.get("/query", query_string={"limit": 20})
+        res = self.app.get("/search", query_string={"limit": 20})
 
         self.assertEqual(res.status_code, 400)
         print("Invalid Param tests passed")
 
     def testInsertAndDelete(self):
         res = self.app.post("/insert",
-                            data=json.dumps({"post": {"url": "blah", "score": 1, "content": "blah", "id": 100}}),
+                            data=json.dumps({"post": {"url": "blah", "score": 1, "content": "blah", "id": 10}}),
+                            content_type="application/json")
+        res = self.app.post("/insert",
+                            data=json.dumps({"post": {"url": "blah", "score": 1, "content": "foobar", "id": 200}}),
                             content_type="application/json")
 
         self.assertEqual(res.status_code, 201)
-        self.app.post("/delete", data=json.dumps({"id": 100}),
-                      content_type="application/json")
+        res = self.app.get("/search", query_string={"literal_query": "blah"})
+        print(res.get_json())
+
+        res = self.app.post("/delete", data=json.dumps({"id": 10}),
+                            content_type="application/json")
 
         self.assertEqual(res.status_code, 201)
 
         print("testInsertAndDelete() passed")
-
-    def testEverything(self):
-        res = self.app.post("/insert",
-                            data=json.dumps(
-                                {"post": {"content": "scala is great", "score": 1, "url": "blah", "id": 500}}),
-                            content_type="application/json")
-
-        self.assertEqual(res.status_code, 201)
-
-        # the rest es client uses fuzzy matching by default (thus the explicit typo)
-        res = self.app.get("/query", query_string={"literal_query": "skala"})
-
-        # there should more than 1 match
-        self.assertTrue(len(res.get_json()["result"]) >= 1)
-
-        res = self.app.post("/delete", data=json.dumps({"id": 500}), content_type="application/json")
-
-        # post deleted, everything's fine
-        self.assertEqual(res.status_code, 201)
-        print("Mini Integration test passed")

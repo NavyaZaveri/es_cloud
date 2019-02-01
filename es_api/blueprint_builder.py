@@ -27,7 +27,7 @@ def create_blueprint(config):
             posts.append(post_utils.toPost(hit))
         return json.dumps({"result": posts}), 200
 
-    @es_blueprint.route("/query", methods=["GET"])
+    @es_blueprint.route("/search", methods=["GET"])
     def find_posts():
         q = request.args.get("literal_query")
         l = request.args.get("limit")
