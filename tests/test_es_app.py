@@ -36,9 +36,6 @@ class TestEsApp(unittest.TestCase):
         res = self.app.post("/insert",
                             data=json.dumps({"post": {"url": "blah", "score": 1, "content": "blah", "id": 10}}),
                             content_type="application/json")
-        res = self.app.post("/insert",
-                            data=json.dumps({"post": {"url": "blah", "score": 1, "content": "foobar", "id": 200}}),
-                            content_type="application/json")
 
         self.assertEqual(res.status_code, 201)
         res = self.app.get("/search", query_string={"literal_query": "blah"})
