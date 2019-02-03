@@ -27,7 +27,7 @@ class EsWrapper:
         """
         If no index is specified, deletes the default index.
         :param index:
-        :return:
+        :return: None
         """
         if index is None:
             self.client.indices.delete(self.index)
@@ -35,6 +35,15 @@ class EsWrapper:
             self.client.indices.delete(index)
 
     def find_posts_by_content(self, query, strategy="fuzzy"):
+        """
+        Find all posts that match against the query searched.
+        Fuzzy matching is turned on by default, but we can use exact
+        string matching by simply the changing strategy arg to "match"
+
+        :param query (str): what are we searching for
+        :param strategy (str): matching strategy
+        :return: posts (list): a list of posts that are similar to the query, by content
+        """
         results = Search(using=self.client).doc_type(Post.DOC_TYPE).query(strategy, content=query).execute()
         posts = []
         for p in results:
@@ -47,7 +56,7 @@ class EsWrapper:
 
         :param posts: A PostList container. It is wrapper around native python list,
         designed specifically to have a __hash___ function  so that the result of this function can be cached
-        :return: timestamp_to+medians
+        :return: timestamp_to_medians (dict)
         """
         posts = posts.to_raw_list()
         timestamp_to_medians = {}

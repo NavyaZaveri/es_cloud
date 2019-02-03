@@ -17,8 +17,9 @@ class TestEsWrapper(unittest.TestCase):
         post = Post(content="foo bar", timestamp="1")
         self.client.insert_post(post)
 
-        # weirdly the elastic search inverted index isn't atomic, so the sleep() prevents any  race conditions
-        # still need to investigate...
+        # weirdly the elastic search inverted index doesn't seem to be atomic; the sleep() invocation thus
+        # mitigates against   race conditions.
+        # but still need to investigate why es isn't atomic...
         time.sleep(1)
 
         # fuzzy matching on by default
@@ -29,11 +30,15 @@ class TestEsWrapper(unittest.TestCase):
         self.client.delete_index()
 
     def testMedianProcessing(self):
+        """
+        let's create a bunch of posts about a framework, foobar
+        """
         p1 = Post(content="foobar 1", timestamp="0", score=0.1)
         p2 = Post(content="foobar 2", timestamp="0", score=0.5)
         p3 = Post(content="foobar 3", timestamp="0", score=1.0)
         p4 = Post(content="foobar 4", timestamp="1", score=0.44)
 
+        # insert them all
         self.client.insert_posts(p1, p2, p3, p4)
 
         time.sleep(1)
