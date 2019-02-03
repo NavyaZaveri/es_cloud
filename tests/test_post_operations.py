@@ -4,7 +4,7 @@ from post_statistics.average import group_by, median, mean
 
 
 class TestPostOperation(unittest.TestCase):
-    def test_post_container_hash_function(self):
+    def test_hash_function_of_post_container(self):
         """
         It is crucial that hash function for the Post List container is defined correctly
         for the @lru cache to work, which would ensure significant performance gains.
@@ -15,16 +15,20 @@ class TestPostOperation(unittest.TestCase):
         p3 = Post(content="hello worlds", timestamp="0")
 
         plist_1 = PostList([p1, p2])
-        plist_2 = PostList([p1, p2])
+        plist_2 = PostList([p2, p1])
         plist_3 = PostList([p1, p3])
-        post_set = set()
+        post_list_set = set()
 
-        post_set.add(p1)
-        post_set.add(p2)
+        # Posts p1 and p2 are the same.
+        #  Thus the containers carrying both of these points should also evaluated as equal
+        # We don't care about the order of the post
+        post_list_set.add(plist_1)
+        post_list_set.add(plist_2)
+        self.assertTrue(len(post_list_set) == 1)
 
-        self.assertTrue(len(post_set) == 1)
-        self.assertEqual(plist_1, plist_2, msg="Hash function on Post List not defined correctly")
-        self.assertNotEqual(plist_1, plist_3, msg="Hash function on Post List not defined correctly.")
+        post_list_set.add(plist_3)
+        self.assertTrue(len(post_list_set) == 2)
+        self.assertNotEqual(p1, p3, msg="Hash function on Post not defined correctly.")
 
     def test_post_statistics(self):
         """
