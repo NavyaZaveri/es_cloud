@@ -31,6 +31,9 @@ class Post:
     def id(self):
         return self._id
 
+    def __eq__(self, other):
+        return self._id == other.id
+
     def __str__(self):
         return "{content = {}, score = {}, timestamp = {}, id = {}}".format(self.content,
                                                                             self.score, self.timestamp, self.id)
@@ -62,7 +65,7 @@ class PostList:
         self.posts = posts
 
     def __eq__(self, other):
-        return self.posts == other.posts
+        return all([p1 == p2 for p1, p2 in zip(self.posts, other.posts)])
 
     def add(self, post):
         self.posts.append(post)
@@ -71,7 +74,9 @@ class PostList:
         self.posts.pop()
 
     def __hash__(self):
-        return int(hashlib.sha1(str(self.posts).encode("utf-8")).hexdigest(), 16) % (10 ** 8)
+        all_content = "".join(content for content in self.posts)
+        print(all_content)
+        return int(hashlib.sha1(str(all_content).encode("utf-8")).hexdigest(), 16) % (10 ** 8)
 
     def __str__(self):
         return str(self.posts)
