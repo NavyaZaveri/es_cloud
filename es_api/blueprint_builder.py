@@ -54,7 +54,7 @@ def create_blueprint(config):
             }), 400
 
         # inserts a post
-        es.insert_post(Post.from_json(post))
+        es.insert_post(post)
         return "ok", 201
 
     @es_blueprint.route("/retrieve", methods=["GET"])

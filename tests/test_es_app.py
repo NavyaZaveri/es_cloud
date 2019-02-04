@@ -38,7 +38,8 @@ class TestEsApp(unittest.TestCase):
 
     def testInsertAndDelete(self):
         res = self.app.post("/insert",
-                            data=json.dumps({"post": {"url": "blah", "score": 1, "content": "blah", "id": 10}}),
+                            data=json.dumps(
+                                {"post": {"url": "blah", "score": 1, "content": "blah", "id": 10, "timestamp": 0}}),
                             content_type="application/json")
 
         self.assertEqual(res.status_code, 201)

@@ -1,18 +1,21 @@
 import hashlib
 from textblob import TextBlob
+import hashlib
+
+from textblob import TextBlob
 
 
 class Post:
     DOC_TYPE = "post"
 
-    def __init__(self, content, timestamp=None, score=None, url=None):
+    def __init__(self, content, timestamp=None, score=None, url=None, id=None):
         self._score = TextBlob(content).sentiment.polarity if score is None else score
         self._timestamp = timestamp
         self._content = content
         self._url = url
 
         # posts are uniquely defined by their content.
-        self._id = int(hashlib.sha1(self.content.encode("utf-8")).hexdigest(), 16) % (10 ** 8)
+        self._id = int(hashlib.sha1(self.content.encode("utf-8")).hexdigest(), 16) % (10 ** 8) if not id else id
 
     @property
     def score(self):
@@ -38,10 +41,7 @@ class Post:
         return isinstance(other, Post) and self.id == other.id
 
     def __str__(self):
-        return "{content = {}, score = {}, timestamp = {}, id = {}, url = {}}".format(self.content,
-                                                                                      self.score, self.timestamp,
-                                                                                      self.id,
-                                                                                      self.url)
+        return str(self.to_dict())
 
     def to_dict(self):
         return {
@@ -54,10 +54,6 @@ class Post:
 
     def __hash__(self):
         return self.id
-
-    @classmethod
-    def from_json(cls, json):
-        return cls(content=json["content"], score=json["score"], url=json["url"], timestamp=json["timestamp"])
 
 
 class PostList:
