@@ -38,8 +38,10 @@ class Post:
         return isinstance(other, Post) and self.id == other.id
 
     def __str__(self):
-        return "{content = {}, score = {}, timestamp = {}, id = {}}".format(self.content,
-                                                                            self.score, self.timestamp, self.id)
+        return "{content = {}, score = {}, timestamp = {}, id = {}, url = {}}".format(self.content,
+                                                                                      self.score, self.timestamp,
+                                                                                      self.id,
+                                                                                      self.url)
 
     def to_dict(self):
         return {
