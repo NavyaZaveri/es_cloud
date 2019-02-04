@@ -5,10 +5,11 @@ from textblob import TextBlob
 class Post:
     DOC_TYPE = "post"
 
-    def __init__(self, content, timestamp=None, score=None):
+    def __init__(self, content, timestamp=None, score=None, url=None):
         self._score = TextBlob(content).sentiment.polarity if score is None else score
         self._timestamp = timestamp
         self._content = content
+        self._url = url
 
         # posts are uniquely defined by their content.
         self._id = int(hashlib.sha1(self.content.encode("utf-8")).hexdigest(), 16) % (10 ** 8)
@@ -29,6 +30,10 @@ class Post:
     def id(self):
         return self._id
 
+    @property
+    def url(self):
+        return self._url
+
     def __eq__(self, other):
         return isinstance(other, Post) and self.id == other.id
 
@@ -41,7 +46,8 @@ class Post:
             "content": self.content,
             "timestamp": self.timestamp,
             "id": self.id,
-            "score": self.score
+            "score": self.score,
+            "url": self.url
         }
 
     def __hash__(self):
