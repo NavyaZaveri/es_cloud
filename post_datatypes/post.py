@@ -55,6 +55,10 @@ class Post:
     def __hash__(self):
         return self.id
 
+    @classmethod
+    def from_json(cls, json):
+        return cls(content=json["content"], score=json["score"], url=json["url"], timestamp=json["timestamp"])
+
 
 class PostList:
     """
