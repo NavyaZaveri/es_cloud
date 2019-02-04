@@ -1,8 +1,5 @@
 import hashlib
 from textblob import TextBlob
-import hashlib
-
-from textblob import TextBlob
 
 
 class Post:
