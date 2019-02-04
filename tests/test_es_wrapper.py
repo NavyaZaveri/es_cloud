@@ -1,7 +1,7 @@
 import time
 import unittest
 
-from es_wrapper import EsWrapper
+from es_wrapper import EsWrapper, PostList
 from post_datatypes import Post
 
 
@@ -47,3 +47,23 @@ class TestEsWrapper(unittest.TestCase):
 
         self.assertEqual(avg_score_at["0"], 0.5, msg="Median Tests failed")
         self.assertEqual(avg_score_at["1"], 0.44, msg="Median Tests failed")
+
+    def test_cache_hits(self):
+        # create a bunch of posts
+        p1 = Post(content="tflow1", timestamp="0", score=0.1).to_dict()
+        p2 = Post(content="tflow2", timestamp="0", score=0.5).to_dict()
+        p3 = Post(content="tflow3", timestamp="1", score=1.0).to_dict()
+        self.client.insert_posts(p1, p2, p3)
+
+        # create 3 post containers
+        post_list_1 = PostList.from_raw_list([p1, p2, p3])
+        post_list_2 = PostList.from_raw_list([p1, p3, p2])
+        post_list_3 = PostList.from_raw_list([p1, p2, p3])
+
+        self.client.find_daily_median(post_list_1)
+        self.client.find_daily_median(post_list_2)
+        self.client.find_daily_median(post_list_3)
+
+        actual_hits = self.client.find_daily_median.cache_info().hits
+        expected_hits = 2
+        self.assertTrue(actual_hits == expected_hits, msg="test_cache_hits() failed. Check __hash__() on PostList")
