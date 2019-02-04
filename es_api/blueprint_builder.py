@@ -1,30 +1,23 @@
-from elasticsearch_dsl import Search
-from elasticsearch_dsl.query import MultiMatch
-from flask import Blueprint, request, jsonify
 import json
-
+from flask import Blueprint, request, jsonify
 import post_utils
+from es_wrapper import EsWrapper, Post
 
 
 def create_blueprint(config):
     """
-
     :param config: a Config Object with elastic client and index attributes
     :return: a blueprint for the app
     """
+
     client = config.CLIENT
     index = config.INDEX
     es_blueprint = Blueprint("es_blueprint", __name__)
+    es = EsWrapper(client=client, index=index)
 
     @es_blueprint.route("/", methods=["GET"])
     def home():
-        query = MultiMatch(
-            query="python", fields=['title', 'content'], fuzziness='AUTO')
-        s = Search(using=client, index=index).query(query)
-        response = s.execute()
-        posts = []
-        for hit in response:
-            posts.append(post_utils.toPost(hit))
+        posts = es.find_posts_on(query="python")
         return json.dumps({"result": posts}), 200
 
     @es_blueprint.route("/search", methods=["GET"])
@@ -34,34 +27,11 @@ def create_blueprint(config):
         s = request.args.get("strategy")
         if not q:
             return jsonify({
-                "result": "invalid query parameters - please set literal query"
+                "result": "invalid query parameter - please set literal query"
             }), 400
 
-        query = MultiMatch(query=q, fields=['content'], fuzziness='AUTO')
-        s = Search(using=client, index=index).query(query)
-
-        response = s.execute()
-        posts = []
-
-        for hit in response:
-            posts.append(post_utils.toPost(hit))
+        posts = es.find_posts_on(query=q)
         return jsonify({"result": posts}), 200
-
-    @es_blueprint.route("/repopulate", methods=["POST"])
-    def populate_es_database():
-        """
-        delete all existing documents and
-        repopulate the index with contents
-        in the json file
-
-        """
-        # check if the post request has the file part
-        if "file" not in request.files:
-            return jsonify({"result": "please send a json file"}), 400
-
-        file = request.files["file"]
-
-        return "ok"
 
     @es_blueprint.route("/insert", methods=["POST"])
     def insert_post():
@@ -79,12 +49,12 @@ def create_blueprint(config):
         if not post_utils.is_valid_post(post):
             return jsonify({
                 "result":
-                    "missing content/id field in the post,"
+                    "missing content field in the post,"
                     " please make sure you have them as attributes in your post"
             }), 400
 
         # inserts a post
-        client.index(index, "doc", post, id=post["id"])
+        es.insert_post(post)
         return "ok", 201
 
     @es_blueprint.route("/retrieve", methods=["GET"])
@@ -109,7 +79,13 @@ def create_blueprint(config):
             }), 400
 
         id_to_be_deleted = json_id["id"]
-        client.delete(index, doc_type="doc", id=id_to_be_deleted)
+        client.delete(index, doc_type=Post.DOC_TYPE, id=id_to_be_deleted)
         return "ok", 201
+
+    @es_blueprint.route("/median", methods=["GET"])
+    def get_average():
+        framework = request.args.get("framework")
+        timestamp_to_scores = es.find_median_scores_of(framework)
+        return jsonify(timestamp_to_scores), 200
 
     return es_blueprint

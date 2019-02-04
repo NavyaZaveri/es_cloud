@@ -8,16 +8,19 @@ from post_statistics.average import group_by, median
 
 
 class EsWrapper:
-    def __init__(self, client=None, index="testing"):
-        self.ES_ENDPOINT = "http://localhost:9200"
+    def __init__(self, client=None, index="testing", endpoint="http://localhost:9200"):
+        self.ES_ENDPOINT = endpoint
         self.index = index
-
         # connects to localhost by default unless the client is provided
         self.client = Elasticsearch(self.ES_ENDPOINT, ca_serts=False, verify_certs=False) if client is None else client
-        self.index = "testing"
 
     def insert_post(self, post):
-        res = self.client.index(index=self.index, body=post.to_dict(), doc_type=post.DOC_TYPE, id=post.id)
+        if isinstance(post, Post):
+            self.client.index(index=self.index, body=post.to_dict(), id=post.id, doc_type=Post.DOC_TYPE)
+        elif isinstance(post, dict):
+            self.client.index(index=self.index, body=post, id=post["id"], doc_type=Post.DOC_TYPE)
+        else:
+            raise ValueError("Post to be inserted is not an object of type Post or Dict")
 
     def insert_posts(self, *posts):
         for p in posts:
@@ -34,7 +37,7 @@ class EsWrapper:
         else:
             self.client.indices.delete(index)
 
-    def find_posts_by_content(self, query, strategy="fuzzy"):
+    def find_posts_on(self, query, strategy="fuzzy"):
         """
         Find all posts that match against the query searched.
         Fuzzy matching is turned on by default, but we can use exact
@@ -42,12 +45,12 @@ class EsWrapper:
 
         :param query (str): what are we searching for
         :param strategy (str): matching strategy
-        :return: posts (list): a list of posts that are similar to the query, by content
+        :return: posts (list): a list of posts (dicts) that are similar to the query, by content
         """
         results = Search(using=self.client).doc_type(Post.DOC_TYPE).query(strategy, content=query).execute()
         posts = []
-        for p in results:
-            posts.append(p)
+        for hit in results:
+            posts.append(hit.to_dict())
         return posts
 
     @lru_cache(maxsize=128)
@@ -60,9 +63,10 @@ class EsWrapper:
         """
         posts = posts.to_raw_list()
         timestamp_to_medians = {}
-        timestamp_to_posts = group_by(posts, attr_selector=lambda x: x.timestamp)
+        timestamp_to_posts = group_by(posts, attr_selector=lambda x: x["timestamp"])
+
         for (timestamp, posts) in timestamp_to_posts.items():
-            avg = median(posts, key=lambda x: x.score)
+            avg = median(posts, key=lambda x: x["score"])
             timestamp_to_medians[timestamp] = avg
         return timestamp_to_medians
 
@@ -73,9 +77,8 @@ class EsWrapper:
         (2) Then we compute the daily median for each day's worth of scores
         (3) Then return a map, mapping timestamps to medians
 
-        :param framework_name (str)
+        :param framework_(str)
         :return: timestamp_to_medians (dict)
         """
-        relevant_posts = self.find_posts_by_content(framework)
-
+        relevant_posts = self.find_posts_on(framework)
         return self.find_daily_median(PostList.from_raw_list(relevant_posts))

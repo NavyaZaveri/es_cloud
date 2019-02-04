@@ -1,6 +1,4 @@
 import hashlib
-from collections import defaultdict
-
 from textblob import TextBlob
 
 
@@ -59,7 +57,7 @@ class PostList:
 
     def __init__(self, posts=[]):
         self.posts = posts
-        all_content = sorted("".join(post.content for post in self.posts))
+        all_content = sorted("#".join(post["content"] for post in self.posts))
         self.id = int(hashlib.sha1(str(all_content).encode("utf-8")).hexdigest(), 16) % (10 ** 8)
 
     def __eq__(self, other):

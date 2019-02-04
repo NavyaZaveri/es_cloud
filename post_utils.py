@@ -21,4 +21,4 @@ def toPost(elastic_hit):
 
 
 def is_valid_post(json_post):
-    return "id" in json_post and "content" in json_post
+    return "content" in json_post

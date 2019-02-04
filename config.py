@@ -6,8 +6,7 @@ from elasticsearch import Elasticsearch
 
 class Config:
     PRODUCTION = False
-    INDEX = "es-english-docs"
-    DOC_TYPE = "doc"
+    INDEX = "es-testing1-docs"
 
 
 class TestingConfig(Config):

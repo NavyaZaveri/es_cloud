@@ -10,24 +10,24 @@ class TestPostOperation(unittest.TestCase):
         for the @lru cache to work, which would ensure significant performance gains.
         """
 
-        p1 = Post(content="hello world", timestamp="0")
-        p2 = Post(content="hello world", timestamp="0")
-        p3 = Post(content="hello worlds", timestamp="0")
+        p1 = Post(content="hello world", timestamp="0").to_dict()
+        p2 = Post(content="hello world", timestamp="0").to_dict()
+        p3 = Post(content="hello worlds", timestamp="0").to_dict()
 
         plist_1 = PostList([p1, p2])
         plist_2 = PostList([p2, p1])
         plist_3 = PostList([p1, p3])
-        post_list_set = set()
+        set_of_postContainers = set()
 
         # Posts p1 and p2 are the same.
-        #  Thus the containers carrying both of these points should also evaluated as equal
-        # We don't care about the order of the post
-        post_list_set.add(plist_1)
-        post_list_set.add(plist_2)
-        self.assertTrue(len(post_list_set) == 1)
+        # Thus the containers carrying both of these points should also evaluated as equal
+        # We don't care about the order of the posts
+        set_of_postContainers.add(plist_1)
+        set_of_postContainers.add(plist_2)
+        self.assertTrue(len(set_of_postContainers) == 1)
 
-        post_list_set.add(plist_3)
-        self.assertTrue(len(post_list_set) == 2)
+        set_of_postContainers.add(plist_3)
+        self.assertTrue(len(set_of_postContainers) == 2)
         self.assertNotEqual(p1, p3, msg="Hash function on Post not defined correctly.")
 
     def test_post_statistics(self):
