@@ -20,21 +20,16 @@ class TestEsApp(unittest.TestCase):
         response = self.app.get("/")
         self.assertEqual(response.status_code, 200)
 
-        print("testIfApiIsUp() passed")
-
     def testFindRelevantPosts(self):
         # valid query
         res = self.app.get("/search", query_string={"literal_query": "blah", "limit": 20, "strategy": "fuzzy"})
         self.assertEqual(res.status_code, 200)
-
-        print("testFindRelevantPosts passed")
 
     def testInvalidParm(self):
         # doesn't contain the query
         res = self.app.get("/search", query_string={"limit": 20})
 
         self.assertEqual(res.status_code, 400)
-        print("Invalid Param tests passed")
 
     def testInsertAndDelete(self):
         res = self.app.post("/insert",
@@ -49,8 +44,6 @@ class TestEsApp(unittest.TestCase):
                             content_type="application/json")
 
         self.assertEqual(res.status_code, 201)
-
-        print("testInsertAndDelete() passed")
 
     def testMedian(self):
         p1 = Post(content="foobar", timestamp="0", score=1).to_dict()
