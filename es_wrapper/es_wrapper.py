@@ -77,7 +77,7 @@ class EsWrapper:
         (2) Then we compute the daily median for each day's worth of scores
         (3) Then return a map, mapping timestamps to medians
 
-        :param framework_(str)
+        :param: framework_(str)
         :return: timestamp_to_medians (dict)
         """
         relevant_posts = self.find_posts_on(framework)

@@ -19,9 +19,7 @@ class TestPostOperation(unittest.TestCase):
         plist_3 = PostList([p1, p3])
         set_of_postContainers = set()
 
-        # Posts p1 and p2 are the same.
-        # Thus the containers carrying both of these points should also evaluated as equal
-        # We don't care about the order of the posts
+        # Post containers, plist1 and plist2, are the same: they contain the same posts, albeit ordered differently (which doesn't matter)
         set_of_postContainers.add(plist_1)
         set_of_postContainers.add(plist_2)
         self.assertTrue(len(set_of_postContainers) == 1)
