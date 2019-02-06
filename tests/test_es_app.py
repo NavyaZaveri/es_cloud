@@ -20,12 +20,12 @@ class TestEsApp(unittest.TestCase):
         response = self.app.get("/")
         self.assertEqual(response.status_code, 200)
 
-    def testFindRelevantPosts(self):
+    def testStatusCodeWhenSearchingPosts(self):
         # valid query
         res = self.app.get("/search", query_string={"literal_query": "blah", "limit": 20, "strategy": "fuzzy"})
         self.assertEqual(res.status_code, 200)
 
-    def testInvalidParm(self):
+    def testInvalidParametersPassedToSearch(self):
         # doesn't contain the query
         res = self.app.get("/search", query_string={"limit": 20})
 
