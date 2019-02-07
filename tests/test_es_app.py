@@ -61,4 +61,4 @@ class TestEsApp(unittest.TestCase):
         self.app.post("/delete", data=json.dumps({"id": p2["id"]}), content_type="application/json")
         self.app.post("/delete", data=json.dumps({"id": p3["id"]}), content_type="application/json")
 
-        self.assertTrue(result == {"0": 2})
+        self.assertTrue(result == {"0": 2}, msg="expected result: ('0' -> 2) , got {}".format(str(result)))

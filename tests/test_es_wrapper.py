@@ -67,3 +67,12 @@ class TestEsWrapper(unittest.TestCase):
         actual_hits = self.client.find_daily_median.cache_info().hits
         expected_hits = 2
         self.assertTrue(actual_hits == expected_hits, msg="test_cache_hits() failed. Check __hash__() on PostList")
+
+    def testDuplicateInsertion(self):
+        p1 = Post(content="xyz", timestamp="0").to_dict()
+        p2 = Post(content="xyz", timestamp="1").to_dict()
+        p3 = Post(content="xyz", timestamp="100").to_dict()
+        self.client.insert_posts(p1, p2, p3)
+        time.sleep(1)
+        posts = self.client.find_posts_on("xyz")
+        self.assertTrue(len(posts) == 1, msg="len(posts)=" + str(len(posts)) + ", expected 1")
