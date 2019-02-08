@@ -49,7 +49,7 @@ class EsWrapper:
         :return: posts (list): a list of posts (dicts) that are similar to the query, by content
         """
         search = Search(using=self.client)
-        search.update_from_dict({"size": 10})
+        search.update_from_dict({"size": size})
         results = search.doc_type(Post.DOC_TYPE).query(strategy, content=query).execute()
         posts = []
         for hit in results:
