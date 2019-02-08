@@ -83,5 +83,6 @@ class EsWrapper:
         :param: framework_(str)
         :return: timestamp_to_medians (dict)
         """
-        relevant_posts = self.find_posts(framework)
+        max_limit = 10000  # elastic search limit
+        relevant_posts = self.find_posts(framework, size=max_limit)
         return self.find_daily_median(PostList.from_raw_list(relevant_posts))
