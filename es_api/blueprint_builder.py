@@ -17,20 +17,20 @@ def create_blueprint(config):
 
     @es_blueprint.route("/", methods=["GET"])
     def home():
-        posts = es.find_posts_on(query="python")
+        posts = es.find_posts(query="python")
         return json.dumps({"result": posts}), 200
 
     @es_blueprint.route("/search", methods=["GET"])
     def find_posts():
         q = request.args.get("literal_query")
-        l = request.args.get("limit")
+        limit = request.args.get("limit")
         s = request.args.get("strategy")
         if not q:
             return jsonify({
                 "result": "invalid query parameter - please set literal query"
             }), 400
 
-        posts = es.find_posts_on(query=q)
+        posts = es.find_posts(query=q, size=limit) if limit else es.find_posts(query=q)
         return jsonify({"result": posts}), 200
 
     @es_blueprint.route("/insert", methods=["POST"])

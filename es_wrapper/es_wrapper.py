@@ -37,17 +37,20 @@ class EsWrapper:
         else:
             self.client.indices.delete(index)
 
-    def find_posts_on(self, query, strategy="fuzzy"):
+    def find_posts(self, query, strategy="fuzzy", size=50):
         """
         Find all posts that match against the query searched.
         Fuzzy matching is turned on by default, but we can use exact
         string matching by simply the changing strategy arg to "match"
 
+        :param size:
         :param query (str): what are we searching for
         :param strategy (str): matching strategy
         :return: posts (list): a list of posts (dicts) that are similar to the query, by content
         """
-        results = Search(using=self.client).doc_type(Post.DOC_TYPE).query(strategy, content=query).execute()
+        search = Search(using=self.client)
+        search.update_from_dict({"size": 10})
+        results = search.doc_type(Post.DOC_TYPE).query(strategy, content=query).execute()
         posts = []
         for hit in results:
             posts.append(hit.to_dict())
@@ -80,5 +83,5 @@ class EsWrapper:
         :param: framework_(str)
         :return: timestamp_to_medians (dict)
         """
-        relevant_posts = self.find_posts_on(framework)
+        relevant_posts = self.find_posts(framework)
         return self.find_daily_median(PostList.from_raw_list(relevant_posts))

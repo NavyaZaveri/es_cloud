@@ -23,7 +23,7 @@ class TestEsWrapper(unittest.TestCase):
         time.sleep(1)
 
         # fuzzy matching on by default
-        posts = self.client.find_posts_on("foo")
+        posts = self.client.find_posts("foo")
         self.assertTrue(len(posts) == 1)
 
     def tearDown(self):
@@ -74,5 +74,5 @@ class TestEsWrapper(unittest.TestCase):
         p3 = Post(content="xyz", timestamp="100").to_dict()
         self.client.insert_posts(p1, p2, p3)
         time.sleep(1)
-        posts = self.client.find_posts_on("xyz")
+        posts = self.client.find_posts("xyz")
         self.assertTrue(len(posts) == 1, msg="len(posts)=" + str(len(posts)) + ", expected 1")
