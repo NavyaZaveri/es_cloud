@@ -83,9 +83,14 @@ def create_blueprint(config):
         return "ok", 201
 
     @es_blueprint.route("/median", methods=["GET"])
-    def get_average():
+    def get_median():
         framework = request.args.get("framework")
-        timestamp_to_scores = es.find_median_scores_of(framework)
-        return jsonify(timestamp_to_scores), 200
+        timestamp_to_medians = es.find_median_scores_of(framework)
+        sorted_timestamps = sorted(timestamp_to_medians)
+        medians = [timestamp_to_medians[t] for t in sorted_timestamps]
+        return jsonify({
+            "timestamps": sorted_timestamps,
+            "medians": medians
+        }), 200
 
     return es_blueprint

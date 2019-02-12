@@ -61,4 +61,5 @@ class TestEsApp(unittest.TestCase):
         self.app.post("/delete", data=json.dumps({"id": p2["id"]}), content_type="application/json")
         self.app.post("/delete", data=json.dumps({"id": p3["id"]}), content_type="application/json")
 
-        self.assertTrue(result == {"0": 2}, msg="expected result: ('0' -> 2) , got {}".format(str(result)))
+        self.assertTrue(result["timestamps"][0] == "0", msg="timestamp 0 not detected")
+        self.assertTrue(result["medians"][0] == 2)

@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
+from flask import jsonify
 
 from post_datatypes.post import Post, PostList
 from post_statistics.average import group_by, median
