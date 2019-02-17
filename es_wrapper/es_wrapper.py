@@ -81,7 +81,7 @@ class EsWrapper:
         (2) Then we compute the daily median for each day's worth of scores
         (3) Then return a map, mapping timestamps to medians
 
-        :param: framework_(str)
+        :param: framework  (str)
         :return: timestamp_to_medians (dict)
         """
         max_limit = 10000  # elastic search limit
