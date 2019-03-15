@@ -68,7 +68,7 @@ class TestEsWrapper(unittest.TestCase):
         self.assertEqual(avg_score_at["0"], 0.5, msg="Median Tests failed")
         self.assertEqual(avg_score_at["1"], 0.44, msg="Median Tests failed")
 
-    def test_cache_hits(self):
+    def testCacheHits(self):
         # create a bunch of posts
         p1 = Post(content="tflow1", timestamp="0", score=0.1).to_dict()
         p2 = Post(content="tflow2", timestamp="0", score=0.5).to_dict()
@@ -112,5 +112,5 @@ class TestEsWrapper(unittest.TestCase):
             }
         }})
         time.sleep(3)
-        posts = self.client.find_posts("post_that_needs_to_be_deleted")
+        posts = self.client.find_posts("xyz")
         self.assertTrue(len(posts) == 0, msg="len(posts)=" + str(len(posts)) + ", expected 0")
