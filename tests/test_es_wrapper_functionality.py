@@ -95,14 +95,14 @@ class TestEsWrapper(unittest.TestCase):
         self.client.insert_posts(p1, p2, p3)
         time.sleep(1)
         posts = self.client.find_posts("xyz")
-        self.assertTrue(len(posts) == 1, msg="len(posts)=" + str(len(posts)) + ", expected 1")
+        self.assertTrue(len(posts) == 1, msg="len(posts)= " + str(len(posts)) + ", expected 1")
 
     def testPostDeletionByQuery(self):
         p1 = Post(content="xyz 1", timestamp="1", score=0).to_dict()
         p2 = Post(content="xyz 2", timestamp="2", score=0).to_dict()
 
         self.client.insert_posts(p1, p2)
-        time.sleep(3)
+        time.sleep(1)
         posts = self.client.find_posts("xyz")
         time.sleep(3)
         self.assertTrue(len(posts) == 2, msg="len(posts)=" + str(len(posts)) + ", expected 2")
@@ -111,6 +111,6 @@ class TestEsWrapper(unittest.TestCase):
                 "score": 0
             }
         }})
-        time.sleep(3)
+        time.sleep(1)
         posts = self.client.find_posts("xyz")
         self.assertTrue(len(posts) == 0, msg="len(posts)=" + str(len(posts)) + ", expected 0")
