@@ -4,12 +4,28 @@ import unittest
 from es_wrapper import EsWrapper, PostList
 from post_datatypes import Post
 
+"""
+A bunch of  unit tests to test the main wrappers 
+of the elastic-search dsl api.  In particular:
+ (1) insertions, 
+ (2) deletions 
+ (3) fuzzy finding
+ (4) median processing
+ (5) cache hits 
+    ...should be tested at the very least. 
+
+Important Note: Elastic search operations don't seem to be atomic  (at least on localhost). As a result, 
+calls to the API have been interpersed with time.sleep() to mitigate race conditions and 
+ensure consistent results.  While this comes at the expense of increasing testing time, until a better solution is found 
+(or even better: the the main es api is made atomic), this seems to be the simplest way to test the wrappers.
+"""
+
 
 class TestEsWrapper(unittest.TestCase):
     def setUp(self):
         """"
          sets up a client connected to the localhost
-         by default
+         by default. The index it is tested  against is named "testing".
          """
         self.client = EsWrapper()
 
@@ -27,6 +43,10 @@ class TestEsWrapper(unittest.TestCase):
         self.assertTrue(len(posts) == 1)
 
     def tearDown(self):
+        """
+        If you need to see the logs at
+        http://localhost:9200/testing/_search?pretty=true&q=* for debugging purposes, comment out below
+        """
         self.client.delete_index()
 
     def testMedianProcessing(self):
@@ -76,3 +96,21 @@ class TestEsWrapper(unittest.TestCase):
         time.sleep(1)
         posts = self.client.find_posts("xyz")
         self.assertTrue(len(posts) == 1, msg="len(posts)=" + str(len(posts)) + ", expected 1")
+
+    def testPostDeletionByQuery(self):
+        p1 = Post(content="xyz 1", timestamp="1", score=0).to_dict()
+        p2 = Post(content="xyz 2", timestamp="2", score=0).to_dict()
+
+        self.client.insert_posts(p1, p2)
+        time.sleep(3)
+        posts = self.client.find_posts("xyz")
+        time.sleep(3)
+        self.assertTrue(len(posts) == 2, msg="len(posts)=" + str(len(posts)) + ", expected 2")
+        self.client.delete_post_by({"query": {
+            "match": {
+                "score": 0
+            }
+        }})
+        time.sleep(3)
+        posts = self.client.find_posts("post_that_needs_to_be_deleted")
+        self.assertTrue(len(posts) == 0, msg="len(posts)=" + str(len(posts)) + ", expected 0")

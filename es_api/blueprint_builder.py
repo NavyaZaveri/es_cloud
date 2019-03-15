@@ -94,3 +94,9 @@ def create_blueprint(config):
         }), 200
 
     return es_blueprint
+
+    @es_blueprint.route("/deleteBy", methods=["POST"])
+    def deletePostBy():
+        json_post_attribute = request.get_json()
+
+        # the ES api need

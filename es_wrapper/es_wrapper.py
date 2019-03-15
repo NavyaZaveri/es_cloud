@@ -2,7 +2,6 @@ from functools import lru_cache
 
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
-from flask import jsonify
 
 from post_datatypes.post import Post, PostList
 from post_statistics.average import group_by, median
@@ -26,6 +25,9 @@ class EsWrapper:
     def insert_posts(self, *posts):
         for p in posts:
             self.insert_post(p)
+
+    def delete_post_by(self, body):
+        self.client.delete_by_query(index=[self.index], body=body, doc_type=Post.DOC_TYPE)
 
     def delete_index(self, index=None):
         """
