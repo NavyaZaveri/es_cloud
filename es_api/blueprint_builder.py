@@ -66,21 +66,30 @@ def create_blueprint(config):
         pass
 
     @es_blueprint.route("/delete", methods=["POST"])
-    def delete_post():
-        """
-        deletes a post, given an id
-        """
-        json_id = request.get_json()
-        if json_id is None:
-            return jsonify({
-                "result":
-                    "json content not received. Please make sure you send json,"
-                    " with content_type='application/json'"
-            }), 400
-
-        id_to_be_deleted = json_id["id"]
-        client.delete(index, doc_type=Post.DOC_TYPE, id=id_to_be_deleted)
-        return "ok", 201
+    def delete_post_by():
+        json_post_query = request.get_json()
+        if "score" not in json_post_query and "id" not in json_post_query > 1:
+            return jsonify({"error": "Only 2 types"
+                                     "of post deletions are supported at the moment. "
+                                     "(1) posts with score = 0, and (2) post with a given id"}), 400
+        if "score" in json_post_query:
+            score = json_post_query["score"]
+            es.delete_post_by({
+                "query": {
+                    "match": {
+                        "score": score
+                    }
+                }
+            })
+        elif "id" in json_post_query:
+            post_id = json_post_query["id"]
+            es.delete_post_by({
+                "query": {
+                    "match": {
+                        "id": post_id
+                    }
+                }
+            })
 
     @es_blueprint.route("/median", methods=["GET"])
     def get_median():
@@ -94,9 +103,3 @@ def create_blueprint(config):
         }), 200
 
     return es_blueprint
-
-    @es_blueprint.route("/deleteBy", methods=["POST"])
-    def deletePostBy():
-        json_post_attribute = request.get_json()
-
-        # the ES api need
