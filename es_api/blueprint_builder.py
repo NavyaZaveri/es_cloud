@@ -68,12 +68,15 @@ def create_blueprint(config):
     @es_blueprint.route("/delete", methods=["POST"])
     def delete_post_by():
         json_post_query = request.get_json()
-        if "score" not in json_post_query and "id" not in json_post_query > 1:
+        print(json_post_query)
+        if "score" not in json_post_query and "id" not in json_post_query:
             return jsonify({"error": "Only 2 types"
-                                     "of post deletions are supported at the moment. "
-                                     "(1) posts with score = 0, and (2) post with a given id"}), 400
+                                     "of post deletions are supported at the moment. In particular, you can delete '\n"
+                                     "(1) posts with score = 0, and (2) a post with a given id"}), 400
         if "score" in json_post_query:
             score = json_post_query["score"]
+            if score != 0:
+                return jsonify({"error": "score is not set to 0. Currently only neutral posts can be deleted"}), 400
             es.delete_post_by({
                 "query": {
                     "match": {
@@ -90,6 +93,7 @@ def create_blueprint(config):
                     }
                 }
             })
+        return "ok", 201
 
     @es_blueprint.route("/median", methods=["GET"])
     def get_median():

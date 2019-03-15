@@ -37,13 +37,13 @@ class TestEsApp(unittest.TestCase):
                                 {"post": {"url": "blah", "score": 1, "content": "blah", "id": 10, "timestamp": 0}}),
                             content_type="application/json")
 
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 201, msg=res.get_json())
         res = self.app.get("/search", query_string={"literal_query": "blah"})
 
         res = self.app.post("/delete", data=json.dumps({"id": 10}),
                             content_type="application/json")
 
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 201, msg=res.get_json())
 
     def testMedian(self):
         p1 = Post(content="foobar", timestamp="0", score=1).to_dict()

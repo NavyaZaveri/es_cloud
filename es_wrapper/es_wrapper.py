@@ -1,3 +1,4 @@
+import time
 from functools import lru_cache
 
 from elasticsearch import Elasticsearch
@@ -11,6 +12,7 @@ class EsWrapper:
     def __init__(self, client=None, index="testing", endpoint="http://localhost:9200"):
         self.ES_ENDPOINT = endpoint
         self.index = index
+
         # connects to localhost by default unless the client is provided
         self.client = Elasticsearch(self.ES_ENDPOINT, ca_serts=False, verify_certs=False) if client is None else client
 
@@ -20,13 +22,16 @@ class EsWrapper:
         elif isinstance(post, dict):
             self.client.index(index=self.index, body=post, id=post["id"], doc_type=Post.DOC_TYPE)
         else:
-            raise ValueError("Post to be inserted is not an object of type Post or Dict")
+            raise ValueError("Post to be inserted is not a Post instance or a dict")
 
     def insert_posts(self, *posts):
         for p in posts:
             self.insert_post(p)
 
     def delete_post_by(self, body):
+        # this delay mitigates against version conflicts. See https://www.elastic.co/guide/en/elasticsearch/guide/current/optimistic-concurrency-control.html
+        time.sleep(1)
+
         self.client.delete_by_query(index=[self.index], body=body, doc_type=Post.DOC_TYPE)
 
     def delete_index(self, index=None):
