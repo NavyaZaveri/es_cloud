@@ -39,6 +39,6 @@ six==1.11.0
 textblob==0.15.1
 tweepy==3.7.0
 update-checker==0.16
-urllib3==1.24.1
+urllib3>=1.24.2
 validators==0.12.3
 Werkzeug==0.14.1
