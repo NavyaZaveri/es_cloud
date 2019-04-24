@@ -15,7 +15,7 @@ of the elastic-search dsl api.  In particular:
     ...should be tested at the very least. 
 
 Important Note: Elastic search operations don't seem to be atomic  (at least on localhost). As a result, 
-calls to the API have been interpersed with time.sleep() to mitigate race conditions and 
+calls to the API have been interspersed with time.sleep() to mitigate race conditions and 
 ensure consistent results.  While this comes at the expense of increasing testing time, until a better solution is found 
 (or even better: the the main es api is made atomic), this seems to be the simplest way to test the wrappers.
 """
