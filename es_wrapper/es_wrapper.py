@@ -69,7 +69,7 @@ class EsWrapper:
         """
 
         :param posts: A PostList container. It is wrapper around native python list,
-        designe to have a special__hash___ function  so that the result of this function can be cached
+        designed to have a special__hash___ function  so that the result of this function can be cached
         :return: timestamp_to_medians (dict)
         """
         posts = posts.to_raw_list()
