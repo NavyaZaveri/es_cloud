@@ -56,7 +56,7 @@ class EsWrapper:
         :param strategy (str): matching strategy
         :return: posts (list): a list of posts (dicts) that are similar to the query, by content
         """
-        search = Search(using=self.client)
+        search = Search(using=self.client, index=self.index)
         search.update_from_dict({"size": size})
         results = search.doc_type(Post.DOC_TYPE).query(strategy, content=query).execute()
         posts = []
