@@ -62,7 +62,6 @@ class EsWrapper:
         posts = []
         for hit in results:
             posts.append(hit.to_dict())
-        posts.sort(key=lambda x: -x["score"])
         return posts
 
     @lru_cache(maxsize=128)
