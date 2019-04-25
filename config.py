@@ -18,7 +18,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     PRODUCTION = True
     ES_ENDPOINT = os.environ["ES_ENDPOINT"]
-    INDEX = "events-uob-sentiment-analysis"
+    INDEX = "events-nospam-sentiment-analysis"
     AUTH = re.search('https\:\/\/(.*)\@', ES_ENDPOINT).group(1).split(':')
     HOST = ES_ENDPOINT.replace('https://%s:%s@' % (AUTH[0], AUTH[1]), '')
     ES_HEADERS = [{"host": HOST, "port": 443, "use_ssl": True, "http_auth": (AUTH[0], AUTH[1])}]
